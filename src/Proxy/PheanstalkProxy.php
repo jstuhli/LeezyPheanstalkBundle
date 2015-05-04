@@ -246,6 +246,29 @@ class PheanstalkProxy implements PheanstalkProxyInterface
     /**
      * {@inheritDoc}
      */
+    public function putUnique($data, $priority = self::DEFAULT_PRIORITY, $delay = self::DEFAULT_DELAY, $ttr = self::DEFAULT_TTR)
+    {
+        if ($this->dispatcher) {
+            $this->dispatcher->dispatch(
+                CommandEvent::PUT_UNIQUE,
+                new CommandEvent(
+                    $this,
+                    [
+                        'data'     => $data,
+                        'priority' => $priority,
+                        'delay'    => $delay,
+                        'ttr'      => $ttr,
+                    ]
+                )
+            );
+        }
+
+        return $this->pheanstalk->putUnique($data, $priority, $delay, $ttr);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function putInTube($tube, $data, $priority = self::DEFAULT_PRIORITY, $delay = self::DEFAULT_DELAY, $ttr = self::DEFAULT_TTR)
     {
         if ($this->dispatcher) {
@@ -265,6 +288,30 @@ class PheanstalkProxy implements PheanstalkProxyInterface
         }
 
         return $this->pheanstalk->putInTube($tube, $data, $priority, $delay, $ttr);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function putUniqueInTube($tube, $data, $priority = self::DEFAULT_PRIORITY, $delay = self::DEFAULT_DELAY, $ttr = self::DEFAULT_TTR)
+    {
+        if ($this->dispatcher) {
+            $this->dispatcher->dispatch(
+                CommandEvent::PUT_UNIQUE_IN_TUBE,
+                new CommandEvent(
+                    $this,
+                    [
+                        'tube'     => $tube,
+                        'data'     => $data,
+                        'priority' => $priority,
+                        'delay'    => $delay,
+                        'ttr'      => $ttr,
+                    ]
+                )
+            );
+        }
+
+        return $this->pheanstalk->putUniqueInTube($tube, $data, $priority, $delay, $ttr);
     }
 
     /**
